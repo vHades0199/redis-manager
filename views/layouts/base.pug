@@ -1,0 +1,18 @@
+doctype html
+html(lang='en-US', dir='ltr')
+	head
+		include ./head.pug
+		block css
+
+		//- Main stylesheet and color file
+		if process.env.NODE_ENV === 'production'
+			link(rel='stylesheet', href='/css/site.min.css')
+		else
+			link(rel='stylesheet', href='/css/site.css')
+
+	body
+		block body
+
+		include ./foot.pug
+		
+		block script

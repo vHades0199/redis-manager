@@ -9,8 +9,9 @@
 				}
 			}
 		],
+		"react",
 		"stage-2"
 	],
-	"plugins": [],
+	"plugins": ["./utils/inline-pug-react", "transform-react-pug"],
 	"retainLines": true
 }

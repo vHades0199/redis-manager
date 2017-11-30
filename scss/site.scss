@@ -1,0 +1,23 @@
+main.d-flex {
+  height: 100vh;
+}
+
+.flex-grow {
+  flex-grow: 1;
+}
+
+.flex-no-shrink {
+  flex-shrink: 0;
+}
+
+.no-overflow {
+  overflow: hidden;
+}
+
+.overflow-x {
+  overflow-x: auto;
+}
+
+.overflow-y {
+  overflow-y: auto;
+}

@@ -1,0 +1,31 @@
+{
+	"rules": {
+		"no-unused-vars": "warn",
+		"react/forbid-prop-types": "off",
+		//"jsx-a11y/label-has-for": "off",
+		"class-methods-use-this": [
+			"error",
+			{
+				"exceptMethods": [
+					"render",
+					"getInitialState",
+					"getDefaultProps",
+					"getChildContext",
+					"componentWillMount",
+					"componentDidMount",
+					"componentWillReceiveProps",
+					"shouldComponentUpdate",
+					"componentWillUpdate",
+					"componentDidUpdate",
+					"componentWillUnmount",
+					"reduce"
+				]
+			}
+		]
+	},
+	"globals": {
+		"document": true,
+		"pugReact": true,
+		"localStorage": true
+	}
+}

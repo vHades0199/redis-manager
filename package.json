@@ -1,0 +1,83 @@
+{
+	"name": "redis-manager",
+	"version": "0.0.1",
+	"description": "GUI for redis",
+	"main": "index.js",
+	"scripts": {
+		"start": "babel-node index.js",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/vHades0199/redis-manager.git"
+	},
+	"keywords": [
+		"redis",
+		"gui"
+	],
+	"author": "vHades",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/vHades0199/redis-manager/issues"
+	},
+	"homepage": "https://github.com/vHades0199/redis-manager#readme",
+	"devDependencies": {
+		"babel-cli": "^6.26.0",
+		"babel-eslint": "^8.0.2",
+		"eslint": "^4.12.0",
+		"eslint-config-airbnb": "^16.1.0",
+		"eslint-plugin-import": "^2.8.0",
+		"eslint-plugin-jsx-a11y": "^6.0.2",
+		"eslint-plugin-react": "^7.5.1",
+		"gulp": "^3.9.1",
+		"gulp-autoprefixer": "^4.0.0",
+		"gulp-babel": "^6.1.2",
+		"gulp-combine-mq": "^0.4.0",
+		"gulp-csso": "^3.0.0",
+		"gulp-header": "^1.8.9",
+		"gulp-newer": "^1.3.0",
+		"gulp-plumber": "^1.1.0",
+		"gulp-pug": "^3.3.0",
+		"gulp-rename": "^1.2.2",
+		"gulp-sass": "^3.1.0",
+		"gulp-sourcemaps": "^2.6.1",
+		"gulp-uglify-es": "^0.1.3",
+		"gulp-utils": "git+https://github.com/vHades0199/gulp-utils.git",
+		"minimist": "^1.2.0"
+	},
+	"dependencies": {
+		"async": "^2.6.0",
+		"babel-plugin-transform-react-pug": "^3.2.0",
+		"babel-preset-env": "^1.6.1",
+		"babel-preset-react": "^6.24.1",
+		"babel-preset-stage-2": "^6.24.1",
+		"babel-register": "^6.26.0",
+		"body-parser": "^1.18.2",
+		"browserify-middleware": "^8.0.0",
+		"chalk": "^2.3.0",
+		"cookie-parser": "^1.4.3",
+		"dotenv": "^4.0.0",
+		"express": "^4.16.2",
+		"express-flash": "0.0.2",
+		"express-session": "^1.15.6",
+		"flux": "^3.1.3",
+		"immutable": "^3.8.2",
+		"inflection": "^1.12.0",
+		"ioredis": "^3.2.1",
+		"method-override": "^2.3.10",
+		"pug": "^2.0.0-rc.4",
+		"react": "^16.2.0",
+		"react-dom": "^16.2.0",
+		"react-json-tree": "^0.11.0",
+		"react-json-view": "^1.13.3",
+		"sf": "^0.1.9",
+		"superagent": "^3.8.1",
+		"uuid": "^3.1.0"
+	},
+	"optionalDependencies": {
+		"bootstrap": "^3.3.7",
+		"cmdparser": "0.0.3",
+		"dateformat": "^3.0.2",
+		"readline-browserify": "0.0.4"
+	}
+}
