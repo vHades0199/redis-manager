@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 
 import { getConnection } from '../../utils/global';
+import { split } from '../../utils/util';
 
 export default function (req: Request, res: Response) {
   const { cmd, connectionId } = req.body;
@@ -9,7 +10,7 @@ export default function (req: Request, res: Response) {
     res.send(400);
     return;
   }
-  const parts = cmd.split(' ');
+  const parts = split(cmd);
   const commandName = parts[0].toLowerCase();
   if (!(commandName in client)) {
     res.send(400, 'ERROR: Invalid Command');

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import PropTypes, { instanceOf } from 'prop-types';
 import { JSONTreeProps } from 'react-json-tree';
 import request from 'superagent';
 import uuid from 'uuid/v4';
@@ -13,8 +13,7 @@ type Prop = {
 };
 type State = {
   tree: Object,
-  contentType: string,
-  content: Object,
+  content: Object | Array | String,
 };
 
 const treeProps: JSONTreeProps = (handleShowInfo, handleShowKey) => ({
@@ -25,7 +24,7 @@ const treeProps: JSONTreeProps = (handleShowInfo, handleShowKey) => ({
         case 'server':
           return (
             <button
-              onClick={() => handleShowInfo(data[2])}
+              onClick={e => handleShowInfo(data[2], e)}
               className="text-nowrap btn btn-sm btn-primary"
             >
               {data[1]}
@@ -35,7 +34,7 @@ const treeProps: JSONTreeProps = (handleShowInfo, handleShowKey) => ({
           const serverArgs = raw[raw.length - 1].split('|');
           return (
             <button
-              onClick={() => handleShowKey(data[1], serverArgs[2])}
+              onClick={e => handleShowKey(data[1], serverArgs[2], e)}
               className="text-nowrap btn btn-sm btn-primary"
             >
               {data[1]}
@@ -55,20 +54,44 @@ const treeProps: JSONTreeProps = (handleShowInfo, handleShowKey) => ({
   ),
 });
 
-function DataView(props: State) {
-  switch (props.contentType) {
-    case 'array': {
-      const items = [];
-      props.content.forEach(({ key, value }, inx) => {
-        const id = uuid();
-        items.push(<dt key={id}>{key}</dt>);
-        items.push(<dd key={`key:${id}`}>{value}</dd>);
-      });
-      return <dl>{items}</dl>;
-    }
-    default:
-      return <pre>{props.content}</pre>;
+function DataView(props) {
+  if (props.content == null) return null;
+  if (props.content instanceof Array) {
+    const items = [];
+    props.content.forEach(({ key, value }) => {
+      const id = uuid();
+      items.push(<dt key={id}>{key}</dt>);
+      items.push(<dd key={`key:${id}`}>{value}</dd>);
+    });
+    return <dl>{items}</dl>;
   }
+  if (props.content instanceof Object) {
+    return <JSONTree data={props.content} hideRoot />;
+  }
+  try {
+    const data = JSON.parse(props.content);
+    return <JSONTree data={data} hideRoot />;
+  } catch (e) {
+    // console.log(e);
+  }
+
+  return (
+    <textarea className="form-control" rows="4" value={props.content} onChange={props.onChange} />
+  );
+}
+DataView.propTypes = {
+  onChange: PropTypes.func.isRequired,
+  content: PropTypes.oneOfType([PropTypes.object, PropTypes.array, PropTypes.string]).isRequired,
+};
+
+function getKey(connectionId, key, cb) {
+  request
+    .post('/api/exec')
+    .send({
+      connectionId,
+      cmd: `GET ${key}`,
+    })
+    .end(cb);
 }
 
 class ConnectionInfoView extends Component<Prop, State> {
@@ -82,8 +105,7 @@ class ConnectionInfoView extends Component<Prop, State> {
 
     this.state = {
       tree: {},
-      contentType: 'text',
-      content: '',
+      content: null,
     };
   }
   componentWillReceiveProps(nextProps: Prop) {
@@ -101,28 +123,51 @@ class ConnectionInfoView extends Component<Prop, State> {
     this.setState({ tree });
   }
   handleClick = () => {};
-  handleShowInfo = (raw: string) => {
+  handleShowInfo = (raw: string, e) => {
+    e.stopPropagation();
     const { connections } = this.props;
     this.setState({
-      contentType: 'array',
       content: connections.get(raw).info,
+      connectionId: raw,
+      selectedKey: null,
     });
   };
 
-  handleShowKey = (key: string, connectionId) => {
+  handleShowKey = (key: string, connectionId: string) => {
+    getKey(connectionId, key, (err, { body }) => {
+      this.setState({
+        connectionId,
+        selectedKey: key,
+        content: body,
+      });
+    });
+  };
+
+  handleContentChange = ({ target: { value } }) => {
+    this.setState({ content: value });
+  };
+
+  handleSave = () => {
+    const { connectionId, selectedKey, content } = this.state;
+    const data = content instanceof Object ? JSON.stringify(content) : content;
     request
       .post('/api/exec')
       .send({
         connectionId,
-        cmd: `GET ${key}`,
+        cmd: `SET ${selectedKey} "${data}"`,
       })
-      .end((err, { body }) => {
-        this.setState({
-          contentType: 'text',
-          content: body,
-        });
-      });
+      .end((err, { body }) => {});
   };
+
+  handleRefresh = () => {
+    const { connectionId, selectedKey } = this.state;
+    getKey(connectionId, selectedKey, (err, { body }) => {
+      this.setState({
+        content: body,
+      });
+    });
+  };
+
   render() {
     return (
       <div className="row h-100">
@@ -135,7 +180,17 @@ class ConnectionInfoView extends Component<Prop, State> {
           />
         </div>
         <div className="col-9 h-100 overflow-y">
-          <DataView {...this.state} />
+          <div className="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+            <div className="btn-group mr-2" role="group" aria-label="First group">
+              <button type="button" className="btn btn-secondary" onClick={this.handleSave}>
+                save
+              </button>
+              <button type="button" className="btn btn-secondary" onClick={this.handleRefresh}>
+                refresh
+              </button>
+            </div>
+          </div>
+          <DataView {...this.state} onChange={this.handleContentChange} />
         </div>
       </div>
     );
