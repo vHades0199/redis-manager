@@ -13,13 +13,17 @@ form(onSubmit=props.onSubmit)
                         .col-sm-10
                             input#name.form-control(value=props.field.name, name='name', type='text', onChange=props.onFieldChange)
                     .form-group.row
-                        label.col-sm-2.col-form-label(for='hostname') hostname
+                        label.col-sm-2.col-form-label(for='url') url
                         .col-sm-10
-                            input#hostname.form-control(value=props.field.hostname, name='hostname', type='text', onChange=props.onFieldChange)
+                            input#url.form-control(value=props.field.url, name='url', placeholder='redis://:@localhost:6379', type='text', onChange=props.onFieldChange)
+                    .form-group.row
+                        label.col-sm-2.col-form-label(for='host') hostname
+                        .col-sm-10
+                            input#host.form-control(value=props.field.host, name='host', onChange=props.onFieldChange, placeholder='localhost', type='text')
                     .form-group.row
                         label.col-sm-2.col-form-label(for='port') port
                         .col-sm-10
-                            input#port.form-control(value=props.field.port, name='port', type='text', onChange=props.onFieldChange)
+                            input#port.form-control(value=props.field.port, name='port', type='text', placeholder='6379', onChange=props.onFieldChange)
                     .form-group.row
                         label.col-sm-2.col-form-label(for='inputPassword') password
                         .col-sm-10

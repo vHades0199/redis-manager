@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-const Modal = pugReact`../views/modal.pug`;
+const Modal = pugReact`../views/modalAddNewConnection.pug`;
 
 class AddNewConnection extends Component {
   constructor(props) {
@@ -11,7 +11,7 @@ class AddNewConnection extends Component {
       db: 0,
       name: 'local',
       port: '6379',
-      hostname: 'localhost',
+      host: 'localhost',
       password: '',
     };
   }

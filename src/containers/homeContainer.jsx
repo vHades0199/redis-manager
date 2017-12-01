@@ -7,19 +7,41 @@ import Dispatcher from '../dispatchers/homeDispatcher';
 import ConnectionStore from '../stores/connectionStore';
 import ConnectionInfoView from '../components/ConnectionInfoView';
 
-function onAddConnection(data: ConnectionInfo) {
+interface RedisConnectionInfo {
+  name: string;
+  db: number;
+  host: string;
+  url: string;
+  password: string;
+}
+
+function onAddConnection(data: RedisConnectionInfo) {
   request
     .post('/api/info')
     .send(data)
-    .end((err, res) => {
+    .end((err, res: { body: ConnectionInfo }) => {
       if (!err) {
+        const info = res.body;
         Dispatcher.dispatch({
           type: 'add',
-          data: {
-            ...data,
-            info: JSON.parse(res.text),
-          },
+          id: info.id,
+          data: { ...info, name: data.name },
         });
+        request
+          .post('/api/exec')
+          .send({
+            connectionId: info.id,
+            cmd: 'SCAN 0 MATCH * COUNT 100',
+          })
+          .end((error, { body }) => {
+            if (!error) {
+              Dispatcher.dispatch({
+                type: 'scan',
+                id: info.id,
+                data: body,
+              });
+            }
+          });
       }
     });
 }
@@ -28,13 +50,11 @@ function getStores() {
   return [ConnectionStore];
 }
 
-function getState(prevState) {
+function getState() {
   const connections = ConnectionStore.getState();
 
   return {
-    ...prevState,
     connections,
-    currentConnect: null,
     onAddConnection,
   };
 }

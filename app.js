@@ -12,7 +12,7 @@ import { Map } from 'immutable';
 import routes from './routes';
 import NODE_ENV_CONTANT from './utils/node-env';
 
-const redisConnections = Map({});
+global.redisConnections = new Map();
 const app = new Express();
 
 app.disable('x-powered-by');
@@ -23,8 +23,6 @@ app.set('view engine', 'pug');
 
 // app.use(flash());
 app.use((req, res, next) => {
-  req.redisConnections = redisConnections;
-
   res.locals.sf = sf;
   res.locals.getFlashes = () => req.flash();
 

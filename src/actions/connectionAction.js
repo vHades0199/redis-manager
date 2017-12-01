@@ -1,11 +1,14 @@
 export type ConnectionInfo = {
+  id: string,
   name: string,
-  db: number,
+  info: Array<{ key: string, value: string }>,
+  keys: Array<string | Array<string>>,
 };
 
 export type ConnectionAction =
   | {
       type: 'add',
+      id: string,
       data: ConnectionInfo,
     }
   | {
@@ -13,7 +16,7 @@ export type ConnectionAction =
       name: string,
     }
   | {
-      type: 'info',
+      type: 'scan',
       id: string,
-      data: Object,
+      data: string,
     };

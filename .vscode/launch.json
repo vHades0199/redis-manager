@@ -7,15 +7,9 @@
 		{
 			"type": "node",
 			"request": "launch",
-			"name": "Launch via NPM",
-			"runtimeExecutable": "npm",
-			"runtimeArgs": ["start"]
-		},
-		{
-			"type": "node",
-			"request": "launch",
 			"name": "Launch Program",
-			"program": "${file}"
+			"runtimeArgs": ["-r", "babel-register"],
+			"program": "${workspaceFolder}/index.js"
 		}
 	]
 }
