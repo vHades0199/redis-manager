@@ -27,7 +27,7 @@ export default function (req: T, res: Response) {
   }
   client.info((err, serverInfo) => {
     if (err) {
-      res.send(400, err.message);
+      res.status(400).send(err.message);
       return;
     }
     const id = uuid();

@@ -9,6 +9,7 @@ class AddNewConnection extends Component {
     /* eslint-disable react/no-unused-state */
     this.state = {
       db: 0,
+      url: '',
       name: 'local',
       port: '6379',
       host: 'localhost',

@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import PropTypes, { instanceOf } from 'prop-types';
+import PropTypes from 'prop-types';
 import { JSONTreeProps } from 'react-json-tree';
 import request from 'superagent';
 import uuid from 'uuid/v4';
+import ReactJson from 'react-json-view';
 
 import JSONTree from './BootstrapJSONTree';
 import AddNewConnection from '../components/AddNewConnection';
@@ -65,22 +66,36 @@ function DataView(props) {
     });
     return <dl>{items}</dl>;
   }
+  const viewProps = {
+    name: props.selectedKey,
+    iconStyle: 'circle',
+    onEdit: ({ updated_src }) => {
+      props.onChange(updated_src);
+    },
+    onAdd: ({ updated_src }) => {
+      props.onChange(updated_src);
+    },
+    onDelete: ({ updated_src }) => {
+      props.onChange(updated_src);
+    },
+    onSelect: () => {},
+  };
   if (props.content instanceof Object) {
-    return <JSONTree data={props.content} hideRoot />;
-  }
-  try {
-    const data = JSON.parse(props.content);
-    return <JSONTree data={data} hideRoot />;
-  } catch (e) {
-    // console.log(e);
+    return <ReactJson src={props.content} {...viewProps} />;
   }
 
   return (
-    <textarea className="form-control" rows="4" value={props.content} onChange={props.onChange} />
+    <textarea
+      className="form-control"
+      rows="4"
+      value={props.content}
+      onChange={({ target: { value } }) => props.onChange(value)}
+    />
   );
 }
 DataView.propTypes = {
   onChange: PropTypes.func.isRequired,
+  selectedKey: PropTypes.string.isRequired,
   content: PropTypes.oneOfType([PropTypes.object, PropTypes.array, PropTypes.string]).isRequired,
 };
 
@@ -94,6 +109,21 @@ function getKey(connectionId, key, cb) {
     .end(cb);
 }
 
+function updateTree(connections) {
+  const tree = {};
+  connections.forEach((v, k) => {
+    const id = `server|${v.name}|${k}`;
+    tree[id] = {};
+    if (v.keys) {
+      tree[id][v.keys[0]] = {};
+      v.keys[1].forEach((key) => {
+        tree[id][v.keys[0]][`key|${key}`] = '';
+      });
+    }
+  });
+  return tree;
+}
+
 class ConnectionInfoView extends Component<Prop, State> {
   static propTypes = {
     onAddConnection: PropTypes.func.isRequired,
@@ -104,24 +134,15 @@ class ConnectionInfoView extends Component<Prop, State> {
     super(props);
 
     this.state = {
-      tree: {},
+      tree: updateTree(props.connections),
       content: null,
     };
   }
+
   componentWillReceiveProps(nextProps: Prop) {
-    const tree = {};
-    nextProps.connections.forEach((v, k) => {
-      const id = `server|${v.name}|${k}`;
-      tree[id] = {};
-      if (v.keys) {
-        tree[id][v.keys[0]] = {};
-        v.keys[1].forEach((key) => {
-          tree[id][v.keys[0]][`key|${key}`] = '';
-        });
-      }
-    });
-    this.setState({ tree });
+    this.setState({ tree: updateTree(nextProps.connections) });
   }
+
   handleClick = () => {};
   handleShowInfo = (raw: string, e) => {
     e.stopPropagation();
@@ -135,16 +156,21 @@ class ConnectionInfoView extends Component<Prop, State> {
 
   handleShowKey = (key: string, connectionId: string) => {
     getKey(connectionId, key, (err, { body }) => {
-      this.setState({
-        connectionId,
-        selectedKey: key,
-        content: body,
-      });
+      let content = body;
+      try {
+        content = JSON.parse(body);
+      } finally {
+        this.setState({
+          connectionId,
+          selectedKey: key,
+          content,
+        });
+      }
     });
   };
 
-  handleContentChange = ({ target: { value } }) => {
-    this.setState({ content: value });
+  handleContentChange = (content) => {
+    this.setState({ content });
   };
 
   handleSave = () => {
@@ -154,7 +180,7 @@ class ConnectionInfoView extends Component<Prop, State> {
       .post('/api/exec')
       .send({
         connectionId,
-        cmd: `SET ${selectedKey} "${data}"`,
+        cmd: `SET ${selectedKey} '${data}'`,
       })
       .end((err, { body }) => {});
   };
@@ -162,15 +188,20 @@ class ConnectionInfoView extends Component<Prop, State> {
   handleRefresh = () => {
     const { connectionId, selectedKey } = this.state;
     getKey(connectionId, selectedKey, (err, { body }) => {
-      this.setState({
-        content: body,
-      });
+      let content = body;
+      try {
+        content = JSON.parse(body);
+      } finally {
+        this.setState({
+          content,
+        });
+      }
     });
   };
 
   render() {
     return (
-      <div className="row h-100">
+      <div className="row flex-grow no-gutters">
         <div className="col-3 border border-secondary border-top-0 border-bottom-0 border-left-0">
           <AddNewConnection onSubmit={this.props.onAddConnection} />
           <JSONTree
@@ -179,8 +210,12 @@ class ConnectionInfoView extends Component<Prop, State> {
             {...treeProps(this.handleShowInfo, this.handleShowKey)}
           />
         </div>
-        <div className="col-9 h-100 overflow-y">
-          <div className="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+        <div className="col-9 pl-1 d-flex flex-column">
+          <div
+            className="btn-toolbar flex-no-shrink"
+            role="toolbar"
+            aria-label="Toolbar with button groups"
+          >
             <div className="btn-group mr-2" role="group" aria-label="First group">
               <button type="button" className="btn btn-secondary" onClick={this.handleSave}>
                 save
@@ -190,7 +225,9 @@ class ConnectionInfoView extends Component<Prop, State> {
               </button>
             </div>
           </div>
-          <DataView {...this.state} onChange={this.handleContentChange} />
+          <div className="overflow-y flex-grow">
+            <DataView {...this.state} onChange={this.handleContentChange} />
+          </div>
         </div>
       </div>
     );
