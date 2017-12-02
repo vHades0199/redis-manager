@@ -11,6 +11,7 @@ import { ConnectionState } from '../stores/connectionStore';
 
 type Prop = {
   connections: ConnectionState,
+  className: string,
 };
 type State = {
   tree: Object,
@@ -201,8 +202,8 @@ class ConnectionInfoView extends Component<Prop, State> {
 
   render() {
     return (
-      <div className="row flex-grow no-gutters">
-        <div className="col-3 border border-secondary border-top-0 border-bottom-0 border-left-0">
+      <div className={`row no-gutters no-overflow ${this.props.className}`}>
+        <div className="col-3 mh-100">
           <AddNewConnection onSubmit={this.props.onAddConnection} />
           <JSONTree
             data={this.state.tree}
@@ -210,7 +211,7 @@ class ConnectionInfoView extends Component<Prop, State> {
             {...treeProps(this.handleShowInfo, this.handleShowKey)}
           />
         </div>
-        <div className="col-9 pl-1 d-flex flex-column">
+        <div className="col-9 pl-1 d-flex flex-column mh-100">
           <div
             className="btn-toolbar flex-no-shrink"
             role="toolbar"

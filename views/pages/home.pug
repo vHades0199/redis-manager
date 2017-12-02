@@ -1,7 +1,7 @@
 extends ../layouts/base.pug
 
 block body
-    main.d-flex.flex-column.no-overflow
+    main.d-flex: .d-flex.flex-column.flex-grow
         nav.navbar.navbar-dark.bg-info.navbar-expand-sm.flex-no-shrink
             a.navbar-brand(href='/')
                 | redis manager
@@ -20,22 +20,8 @@ block body
                         a.nav-link(href='#')
                             i.fa.fa-wrench.mr-1
                             | tools
-        .container-fluid.d-flex.flex-column.flex-grow.no-overflow#react-root
-            .row.h-100
-                .col-5.border.border-secondary.border-top-0.border-bottom-0.border-left-0
-                .col-7.h-100.overflow-y
-                    iframe.h-100.w-100(src="https://redis.io/commands", frameborder="0")
-        .container-fluid.flex-no-shrink.border.border-secondary.py-1
-            .btn.btn-primary.btn-sm text
-        .container-fluid
-            pre
-            .py-1
-                label(for='command') current Instance:
-                .input-group.input-group-sm
-                    span#basic-addon3.input-group-addon redis>
-                    input.form-control#command(type='text', aria-describedby='basic-addon3')
-                    span.input-group-btn
-                        button.btn.btn-secondary(type='button') send
+        .d-flex.flex-grow.no-overflow#react-root
+            //- iframe.h-100.w-100(src="https://redis.io/commands", frameborder="0")
 
 block script
     script(src='/js/home.js')

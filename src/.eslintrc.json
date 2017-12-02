@@ -2,7 +2,15 @@
 	"rules": {
 		"no-unused-vars": "warn",
 		"react/forbid-prop-types": "off",
-		//"jsx-a11y/label-has-for": "off",
+		"jsx-a11y/label-has-for": [
+			"error",
+			{
+				"required": {
+					"every": ["id"]
+				},
+				"allowChildren": false
+			}
+		],
 		"class-methods-use-this": [
 			"error",
 			{

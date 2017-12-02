@@ -26,6 +26,7 @@ export const reactCfg = {
   src: 'src/render/',
   expose: {
     jquery: 'jQuery',
+    'react-json-view': 'reactJsonView',
     'react-dom': 'ReactDOM',
     react: 'React',
     'prop-types': 'PropTypes',
