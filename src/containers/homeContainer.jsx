@@ -2,50 +2,9 @@ import React, { CSSProperties } from 'react';
 import { Container } from 'flux/utils';
 import request from 'superagent';
 
-import { ConnectionInfo } from '../actions/connectionAction';
-import Dispatcher from '../dispatchers/homeDispatcher';
-import ConnectionStore from '../stores/connectionStore';
+import ConnectionStore, { ConnectionState } from '../stores/connectionStore';
 import ConnectionInfoView from '../components/ConnectionInfoView';
 import ExecCommand from '../components/ExecCommand';
-
-type RedisConnectionInfo = {
-  name: string,
-  db: number,
-  host: string,
-  url: string,
-  password: string,
-};
-
-function onAddConnection(data: RedisConnectionInfo) {
-  request
-    .post('/api/info')
-    .send(data)
-    .end((err, res: { body: ConnectionInfo }) => {
-      if (!err) {
-        const info = res.body;
-        Dispatcher.dispatch({
-          type: 'add',
-          id: info.id,
-          data: { ...info, name: data.name },
-        });
-        request
-          .post('/api/exec')
-          .send({
-            connectionId: info.id,
-            cmd: 'SCAN 0 MATCH * COUNT 100',
-          })
-          .end((error, { body }) => {
-            if (!error) {
-              Dispatcher.dispatch({
-                type: 'scan',
-                id: info.id,
-                data: body,
-              });
-            }
-          });
-      }
-    });
-}
 
 function onCmdFocus(focus: boolean) {
   const style: CSSProperties = {
@@ -59,6 +18,30 @@ function onCmdFocus(focus: boolean) {
   return style;
 }
 
+function onGetKey(connectionId: string, key: string, cb: (res: string) => void) {
+  request
+    .post('/api/exec')
+    .send({
+      connectionId,
+      cmd: `GET ${key}`,
+    })
+    .end((err, { body }) => {
+      cb(body);
+    });
+}
+
+function onSaveKey(connectionId: string, key: string, content: Object, cb: (res: string) => void) {
+  request
+    .post('/api/exec')
+    .send({
+      connectionId,
+      cmd: `SET ${key} '${content}'`,
+    })
+    .end((err, { body }) => {
+      if (!err) cb(body);
+    });
+}
+
 function getStores() {
   return [ConnectionStore];
 }
@@ -68,13 +51,22 @@ function getState() {
 
   return {
     connections,
-    onAddConnection,
     onCmdFocus,
+    onGetKey,
+    onSaveKey,
   };
 }
 
 type State = {
+  connections: ConnectionState,
   onCmdFocus: (focus: boolean) => CSSProperties,
+  getKey: (connectionId: string, key: string, cb: (res: string) => void) => void,
+  onSaveKey: (
+    connectionId: string,
+    key: string,
+    content: Object,
+    cb: (res: string) => void
+  ) => void,
 };
 
 const View = (props: State) => (

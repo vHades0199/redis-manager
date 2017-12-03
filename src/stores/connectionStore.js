@@ -4,7 +4,7 @@ import { Map } from 'immutable';
 import { ConnectionAction, ConnectionInfo } from '../actions/connectionAction';
 import Dispatcher from '../dispatchers/homeDispatcher';
 
-export interface ConnectionState extends Map<string, ConnectionInfo> {}
+export type ConnectionState = Map<string, ConnectionInfo>;
 
 function save(state) {
   localStorage.setItem('connections', JSON.stringify(state));

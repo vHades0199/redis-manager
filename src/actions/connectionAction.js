@@ -2,7 +2,7 @@ export type ConnectionInfo = {
   id: string,
   name: string,
   info: Array<{ key: string, value: string }>,
-  keys: Array<string | Array<string>>,
+  keys: Array<string | [string]>,
 };
 
 export type ConnectionAction =
