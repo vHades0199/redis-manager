@@ -9,48 +9,45 @@ type Prop = {
   onShowKey: (connectionId: string, key: string) => void,
 };
 export default function ConnectionTree(props: Prop): ?ReactElement<*> {
+  const createButtonInfo = (onClick, content) => (
+    <button
+      onClick={onClick}
+      className="btn btn-sm btn-light py-0 px-1"
+      style={{ verticalAlign: 'baseline', color: 'inherit', textTransform: 'inherit' }}
+    >
+      {content}
+    </button>
+  );
+
   const treeProps: JSONTreeProps = {
     labelRenderer: (raw: [string, string]) => {
       if (raw[0].indexOf('|') >= 0) {
         const data = raw[0].split('|');
         switch (data[0]) {
           case 'server':
-            return (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  props.onShowInfo(data[2]);
-                }}
-                className="text-nowrap btn btn-sm btn-primary"
-              >
-                {data[1]}
-              </button>
-            );
+            return createButtonInfo((e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              props.onShowInfo(data[2]);
+            }, data[1]);
           case 'key': {
             const serverArgs = raw[raw.length - 1].split('|');
-            return (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  props.onShowKey(data[1], serverArgs[2]);
-                }}
-                className="text-nowrap btn btn-sm btn-primary"
-              >
-                {data[1]}
-              </button>
-            );
+            return createButtonInfo((e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              props.onShowKey(data[1], serverArgs[2]);
+            }, data[1]);
           }
           default:
             break;
         }
       }
-      return <strong>{raw[0]}</strong>;
+      return <span className="pl-1">{raw[0]}</span>;
     },
-    getItemString: (type, data, itemType, itemString) => (
-      <span className="text-nowrap">
-        {itemType} <strong className="badge badge-secondary">{itemString}</strong>
-      </span>
-    ),
   };
-  return <JSONTree data={props.data} hideRoot {...treeProps} />;
+  return (
+    <div className="bg-light h-100">
+      <JSONTree data={props.data} hideRoot className="h-100 py-1" {...treeProps} />
+    </div>
+  );
 }

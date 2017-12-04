@@ -10,14 +10,14 @@ type HTMLAttributes = {
 export function ButtonNewConnection({ className = '', target }: HTMLAttributes): ?ReactElement<*> {
   return (
     <button data-target={`#${target}`} className={className} type="button" data-toggle="modal">
-      <i className="fa fa-info mr-1" />add connect...
+      <i className="fa fa-plus-circle mr-1" />add connect...
     </button>
   );
 }
 export function LinkNewConnection({ className = '', target }: HTMLAttributes): ?ReactElement<*> {
   return (
     <a href={`#${target}`} className={className} data-toggle="modal">
-      <i className="fa fa-info mr-1" />add connect...
+      <i className="fa fa-plus-circle mr-1" />add connect...
     </a>
   );
 }

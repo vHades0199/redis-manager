@@ -103,14 +103,14 @@ class ConnectionInfoView extends Component<Prop, State> {
   render() {
     return (
       <div className={`row no-gutters no-overflow ${this.props.className}`}>
-        <div className="col-3 mh-100">
+        <div className="col-5 col-lg-4 mh-100">
           <ConnectionTree
             data={this.state.tree}
             onShowInfo={this.handleShowInfo}
             onShowKey={this.handleShowKey}
           />
         </div>
-        <div className="col-9 pl-2 py-2">
+        <div className="col-7 col-lg-8 pl-2 py-2">
           <DataView
             content={this.state.content}
             desc={this.state.selectedKey}
