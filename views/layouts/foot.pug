@@ -1,13 +1,13 @@
 
+script(src='/lib/jquery/jquery.min.js')
 if process.env.NODE_ENV === 'production'
-    script(src='https://code.jquery.com/jquery-3.2.1.min.js')
+    //-script(src='https://code.jquery.com/jquery-3.2.1.min.js')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js', integrity='sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh', crossorigin='anonymous')
     script(src='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js', integrity='sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ', crossorigin='anonymous')
     script(src='https://unpkg.com/react@15/dist/react.min.js')
     script(src='https://unpkg.com/react-dom@15/dist/react-dom.min.js')
     script(src='https://unpkg.com/prop-types/prop-types.min.js')
 else
-    script(src='/lib/jquery/jquery.min.js')
     script(src='/lib/popper/umd/popper.min.js')
     script(src='/lib/bootstrap/js/bootstrap.min.js')
     script(src='/lib/react/react.js')
