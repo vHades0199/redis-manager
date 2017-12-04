@@ -20,7 +20,7 @@ export default class ExecCommand extends Component<Prop, State> {
 
     this.state = {
       style: props.getStyleOnFocus(false),
-      selectConnection: props.connections.first().id,
+      selectConnection: props.connections.isEmpty() ? '' : props.connections.first().id,
       cmd: '',
       log: '',
     };
